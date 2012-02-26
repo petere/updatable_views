@@ -1,0 +1,21 @@
+CREATE TABLE foo (a int, b text);
+INSERT INTO foo VALUES (1, 'one');
+CREATE VIEW foov1 AS SELECT a AS x, b AS y FROM foo WHERE a < 100;
+CREATE TRIGGER foov1_update INSTEAD OF INSERT OR UPDATE OR DELETE ON foov1 FOR EACH ROW EXECUTE PROCEDURE update_view();
+INSERT INTO foov1 VALUES (2, 'two');
+NOTICE:  view INSERT
+NOTICE:  do_insert = INSERT INTO foo (a, b) VALUES ($1, $2);
+SELECT * FROM foo;
+ a |  b  
+---+-----
+ 1 | one
+ 2 | two
+(2 rows)
+
+SELECT * FROM foov1;
+ x |  y  
+---+-----
+ 1 | one
+ 2 | two
+(2 rows)
+
